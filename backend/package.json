@@ -1,0 +1,35 @@
+{
+  "name": "assetflow-ai-backend",
+  "version": "1.0.0",
+  "description": "Production-quality backend for AssetFlow AI",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "asset-management",
+    "enterprise",
+    "express",
+    "mongodb",
+    "mongoose"
+  ],
+  "author": "GitHub Copilot",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.1.0",
+    "cors": "^2.8.0",
+    "dotenv": "^16.4.1",
+    "express": "^4.21.0",
+    "express-validator": "^7.0.0",
+    "helmet": "^8.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.5.0",
+    "morgan": "^1.10.0",
+    "multer": "1.4.4",
+    "qrcode": "^1.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
