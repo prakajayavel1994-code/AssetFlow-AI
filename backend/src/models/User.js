@@ -5,8 +5,10 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true },
   phone: { type: String, trim: true },
-  role: { type: String, enum: ['admin', 'manager', 'employee'], default: 'employee' },
-  status: { type: String, enum: ['active', 'inactive'], default: 'active' }
+  role: { type: String, enum: ['admin', 'employee'], default: 'employee' },
+  status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+  mustChangePassword: { type: Boolean, default: false },
+  temporaryPassword: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

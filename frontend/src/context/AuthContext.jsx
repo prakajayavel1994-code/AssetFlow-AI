@@ -5,12 +5,43 @@ import api from '../services/api';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('assetflow_user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch {
+      return null;
+    }
+  });
   const [token, setToken] = useState(() => localStorage.getItem('assetflow_token'));
   const [loading, setLoading] = useState(true);
 
+  const persistAuth = (authToken, authUser) => {
+    if (authToken) {
+      localStorage.setItem('assetflow_token', authToken);
+      localStorage.setItem('assetflow_role', authUser?.role || '');
+      localStorage.setItem('assetflow_user', JSON.stringify(authUser));
+    }
+  };
+
+  const updateUser = (updater) => {
+    setUser((current) => {
+      const nextUser = typeof updater === 'function' ? updater(current) : updater;
+      if (nextUser) {
+        localStorage.setItem('assetflow_user', JSON.stringify(nextUser));
+        localStorage.setItem('assetflow_role', nextUser.role || '');
+      } else {
+        localStorage.removeItem('assetflow_user');
+        localStorage.removeItem('assetflow_role');
+      }
+      return nextUser;
+    });
+  };
+
   const logout = (showToast = true) => {
     localStorage.removeItem('assetflow_token');
+    localStorage.removeItem('assetflow_user');
+    localStorage.removeItem('assetflow_role');
     setToken(null);
     setUser(null);
     if (showToast) toast.info('You have been logged out');
@@ -22,7 +53,10 @@ export function AuthProvider({ children }) {
       setToken(savedToken);
       api.get('/auth/profile')
         .then((res) => {
-          setUser(res?.data?.data?.user || null);
+          const profileUser = res?.data?.data?.user || null;
+          if (profileUser) {
+            updateUser(profileUser);
+          }
         })
         .catch(() => {
           logout(false);
@@ -33,15 +67,19 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = async (email, password) => {
-    const response = await api.post('/auth/login', { email, password });
+  const login = async (email, password, selectedRole = 'admin') => {
+    const response = await api.post('/auth/login', { email, password, role: selectedRole.toUpperCase() });
     const authToken = response?.data?.data?.token;
     const authUser = response?.data?.data?.user;
     if (authToken) {
-      localStorage.setItem('assetflow_token', authToken);
+      persistAuth(authToken, authUser);
       setToken(authToken);
       setUser(authUser);
-      toast.success('Welcome back to AssetFlow AI');
+      if (response?.data?.data?.mustChangePassword) {
+        toast.info('Please change your temporary password before continuing');
+      } else {
+        toast.success('Welcome back to AssetFlow AI');
+      }
       return response;
     }
     throw new Error('Authentication failed');
@@ -52,7 +90,7 @@ export function AuthProvider({ children }) {
     const authToken = response?.data?.data?.token;
     const authUser = response?.data?.data?.user;
     if (authToken) {
-      localStorage.setItem('assetflow_token', authToken);
+      persistAuth(authToken, authUser);
       setToken(authToken);
       setUser(authUser);
       toast.success('Account created successfully');
@@ -61,7 +99,7 @@ export function AuthProvider({ children }) {
     throw new Error('Registration failed');
   };
 
-  const value = useMemo(() => ({ user, token, loading, login, register, logout, setUser }), [user, token, loading]);
+  const value = useMemo(() => ({ user, token, loading, login, register, logout, setUser, updateUser }), [user, token, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

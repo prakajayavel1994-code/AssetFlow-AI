@@ -26,20 +26,30 @@ import { useAuth } from '../context/AuthContext';
 
 const drawerWidth = 260;
 
-const menuItems = [
-  { label: 'Dashboard', path: '/dashboard', icon: DashboardRoundedIcon },
-  { label: 'Assets', path: '/assets', icon: DevicesRoundedIcon },
-  { label: 'Employees', path: '/employees', icon: GroupRoundedIcon },
-  { label: 'Assignments', path: '/assignments', icon: AssignmentRoundedIcon },
-  { label: 'Maintenance', path: '/maintenance', icon: BuildRoundedIcon },
-  { label: 'Reports', path: '/reports', icon: AssessmentRoundedIcon },
-  { label: 'AI Assistant', path: '/ai', icon: SmartToyRoundedIcon },
+const adminMenuItems = [
+  { label: 'Dashboard', path: '/admin/dashboard', icon: DashboardRoundedIcon },
+  { label: 'Assets', path: '/admin/assets', icon: DevicesRoundedIcon },
+  { label: 'Employees', path: '/admin/employees', icon: GroupRoundedIcon },
+  { label: 'Assignments', path: '/admin/assignments', icon: AssignmentRoundedIcon },
+  { label: 'Maintenance', path: '/admin/maintenance', icon: BuildRoundedIcon },
+  { label: 'Reports', path: '/admin/reports', icon: AssessmentRoundedIcon },
+  { label: 'AI Assistant', path: '/admin/ai', icon: SmartToyRoundedIcon },
+];
+
+const employeeMenuItems = [
+  { label: 'Dashboard', path: '/employee/dashboard', icon: DashboardRoundedIcon },
+  { label: 'My Assets', path: '/employee/assets', icon: DevicesRoundedIcon },
+  { label: 'Maintenance Requests', path: '/employee/maintenance', icon: BuildRoundedIcon },
+  { label: 'Notifications', path: '/employee/notifications', icon: AssessmentRoundedIcon },
+  { label: 'Profile', path: '/employee/profile', icon: GroupRoundedIcon },
 ];
 
 export default function Sidebar({ open, onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const isAdmin = user?.role === 'admin';
+  const menuItems = isAdmin ? adminMenuItems : employeeMenuItems;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 

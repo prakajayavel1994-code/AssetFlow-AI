@@ -4,6 +4,7 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import { toast } from 'react-toastify';
 import api from '../services/api';
 import MainLayout from '../layouts/MainLayout';
 import Loading from '../components/Loading';
@@ -48,8 +49,11 @@ export default function Employees() {
     try {
       if (editingEmployee) {
         await api.put(`/employees/${editingEmployee._id}`, form);
+        toast.success('Employee updated successfully');
       } else {
-        await api.post('/employees', form);
+        const response = await api.post('/employees', form);
+        const account = response?.data?.data?.account;
+        toast.success(`Employee account created. Temporary password: ${account?.temporaryPassword || 'Welcome@123'}`);
       }
       setOpen(false);
       await fetchEmployees();
@@ -59,6 +63,7 @@ export default function Employees() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this employee?')) return;
     await api.delete(`/employees/${id}`);
+    toast.success('Employee deleted');
     await fetchEmployees();
   };
 

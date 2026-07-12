@@ -21,7 +21,7 @@ export default function Register() {
     try {
       const response = await register(form.fullName, form.email, form.password, form.phone, 'admin');
       if (response?.data?.data?.user) {
-        navigate('/dashboard');
+        navigate('/admin/dashboard');
       }
     } catch (err) {
       setError(err.message || 'Registration failed');
