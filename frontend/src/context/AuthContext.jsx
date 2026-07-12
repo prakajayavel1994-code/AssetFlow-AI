@@ -9,6 +9,13 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('assetflow_token'));
   const [loading, setLoading] = useState(true);
 
+  const logout = (showToast = true) => {
+    localStorage.removeItem('assetflow_token');
+    setToken(null);
+    setUser(null);
+    if (showToast) toast.info('You have been logged out');
+  };
+
   useEffect(() => {
     const savedToken = localStorage.getItem('assetflow_token');
     if (savedToken) {
@@ -40,14 +47,21 @@ export function AuthProvider({ children }) {
     throw new Error('Authentication failed');
   };
 
-  const logout = (showToast = true) => {
-    localStorage.removeItem('assetflow_token');
-    setToken(null);
-    setUser(null);
-    if (showToast) toast.info('You have been logged out');
+  const register = async (fullName, email, password, phone, role = 'admin') => {
+    const response = await api.post('/auth/register', { fullName, email, password, phone, role });
+    const authToken = response?.data?.data?.token;
+    const authUser = response?.data?.data?.user;
+    if (authToken) {
+      localStorage.setItem('assetflow_token', authToken);
+      setToken(authToken);
+      setUser(authUser);
+      toast.success('Account created successfully');
+      return response;
+    }
+    throw new Error('Registration failed');
   };
 
-  const value = useMemo(() => ({ user, token, loading, login, logout, setUser }), [user, token, loading]);
+  const value = useMemo(() => ({ user, token, loading, login, register, logout, setUser }), [user, token, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

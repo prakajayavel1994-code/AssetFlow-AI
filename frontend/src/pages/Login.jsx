@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -77,6 +77,9 @@ export default function Login() {
                 <Button type="submit" variant="contained" size="large" disabled={loading}>
                   {loading ? <CircularProgress size={22} color="inherit" /> : 'Sign In'}
                 </Button>
+                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                  Don’t have an account? <Link to="/register">Create one</Link>
+                </Typography>
               </Stack>
             </Box>
           </CardContent>

@@ -18,7 +18,7 @@ export default function Assignments() {
   const fetchData = async () => {
     try {
       const [assignRes, assetRes, empRes] = await Promise.all([
-        api.get('/assignments'),
+        api.get('/assignments/history'),
         api.get('/assets'),
         api.get('/employees'),
       ]);
@@ -34,7 +34,7 @@ export default function Assignments() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await api.post('/assignments', form);
+    await api.post('/assignments/assign', form);
     setOpen(false);
     setForm(emptyForm);
     await fetchData();
