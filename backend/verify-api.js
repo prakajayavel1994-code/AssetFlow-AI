@@ -1,6 +1,6 @@
 const http = require('http');
 
-const port = 5010;
+const port = 5005;
 const host = '127.0.0.1';
 const email = 'audit' + Date.now() + '@example.com';
 const password = 'Password123!';

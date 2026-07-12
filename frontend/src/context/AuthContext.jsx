@@ -74,7 +74,7 @@ export function AuthProvider({ children }) {
     if (authToken) {
       persistAuth(authToken, authUser);
       setToken(authToken);
-      setUser(authUser);
+      updateUser(authUser);
       if (response?.data?.data?.mustChangePassword) {
         toast.info('Please change your temporary password before continuing');
       } else {
@@ -92,7 +92,7 @@ export function AuthProvider({ children }) {
     if (authToken) {
       persistAuth(authToken, authUser);
       setToken(authToken);
-      setUser(authUser);
+      updateUser(authUser);
       toast.success('Account created successfully');
       return response;
     }
@@ -105,5 +105,23 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (context) {
+    return context;
+  }
+
+  return {
+    user: null,
+    token: null,
+    loading: false,
+    login: async () => {
+      throw new Error('Authentication context is not available');
+    },
+    register: async () => {
+      throw new Error('Authentication context is not available');
+    },
+    logout: () => {},
+    setUser: () => {},
+    updateUser: () => {},
+  };
 }
