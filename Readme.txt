@@ -9,7 +9,7 @@ AI-powered Enterprise Asset & Resource Management System built for **Odoo Hackat
 **Tech Jayam**
 
 - Prakash J
-- Rathish Krishnamoorthi
+- Lalithkumar P P
 
 ---
 
